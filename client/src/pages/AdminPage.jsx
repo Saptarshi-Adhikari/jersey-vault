@@ -1889,6 +1889,7 @@ export default function AdminPage() {
                 return filtered.map(p => (
                   <StockRow key={p.id} product={p} deletingId={deletingId} confirmDeleteId={confirmDeleteId} setConfirmDeleteId={setConfirmDeleteId} onDelete={handleDeleteProduct} cloningId={cloningId} onClone={handleCloneProduct}
                     onSelectReviewsProduct={(productId) => { setSelectedReviewProductId(productId); setActiveTab("reviews"); }}
+                    allTeams={allTeams}
                     onUpdate={(id, newSizeStock, newFeatured, newImageUrl, newName, newPrice, newIs2627, newType, newIsClearance) => setProducts(prev => prev.map(x => x.id === id ? { ...x, size_stock: newSizeStock, featured: newFeatured !== undefined ? newFeatured : x.featured, is_26_27: newIs2627 !== undefined ? newIs2627 : x.is_26_27, is_clearance: newIsClearance !== undefined ? newIsClearance : x.is_clearance, type: newType !== undefined ? newType : x.type, image_url: newImageUrl !== undefined ? newImageUrl : x.image_url, name: newName !== undefined ? newName : x.name, price: newPrice !== undefined ? newPrice : x.price } : x))} />
                 ));
               })()}
@@ -2993,7 +2994,7 @@ export default function AdminPage() {
 // Subtracting is blocked client-side (and the Supabase write is skipped)
 // if it would push stock below zero.
 
-function StockRow({ product: p, deletingId, confirmDeleteId, setConfirmDeleteId, onDelete, onUpdate, cloningId, onClone, onSelectReviewsProduct }) {
+function StockRow({ product: p, deletingId, confirmDeleteId, setConfirmDeleteId, onDelete, onUpdate, cloningId, onClone, onSelectReviewsProduct, allTeams }) {
   const [sizeInputs, setSizeInputs]   = useState({});
   const [savingSize, setSavingSize]   = useState(null);
   const [saveError,  setSaveError]    = useState(null);
@@ -3007,6 +3008,7 @@ function StockRow({ product: p, deletingId, confirmDeleteId, setConfirmDeleteId,
   const [tempName, setTempName] = useState(p.name);
   const [tempPrice, setTempPrice] = useState(p.price);
   const [tempType, setTempType] = useState(p.type || "FAN VERSION");
+  const [tempTeamId, setTempTeamId] = useState(p.team_id || "");
   const [savingDetails, setSavingDetails] = useState(false);
   
   const [localSizeStock, setLocalSizeStock] = useState(
@@ -3032,7 +3034,8 @@ function StockRow({ product: p, deletingId, confirmDeleteId, setConfirmDeleteId,
     setTempName(p.name);
     setTempPrice(p.price);
     setTempType(p.type || "FAN VERSION");
-  }, [p.name, p.price, p.type]);
+    setTempTeamId(p.team_id || "");
+  }, [p.name, p.price, p.type, p.team_id]);
 
   const handleSaveDetails = async () => {
     if (!tempName.trim()) {
@@ -3050,7 +3053,7 @@ function StockRow({ product: p, deletingId, confirmDeleteId, setConfirmDeleteId,
 
     const { error } = await express
       .from("products")
-      .update({ name: tempName.trim(), price: parsedPrice, type: tempType })
+      .update({ name: tempName.trim(), price: parsedPrice, type: tempType, team_id: tempTeamId || null })
       .eq("id", p.id);
 
     if (error) {
@@ -3238,10 +3241,22 @@ function StockRow({ product: p, deletingId, confirmDeleteId, setConfirmDeleteId,
                   >
                     {JERSEY_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                   </select>
+                  <select
+                    className="form-select"
+                    style={{ fontSize: 11, padding: "2px 6px", height: 26, width: "auto", background: "#111", border: "1px solid #333", color: "#00aaff", fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 900 }}
+                    value={tempTeamId}
+                    onChange={e => setTempTeamId(e.target.value)}
+                    aria-label="Change team"
+                  >
+                    <option value="">🛡️ NO TEAM</option>
+                    {(allTeams || []).sort((a, b) => a.name.localeCompare(b.name)).map(t => (
+                      <option key={t.id} value={t.id}>{sportIcon[t.sport] || "🛡️"} {t.name}</option>
+                    ))}
+                  </select>
                   <button type="button" className="btn-primary" style={{ padding: "2px 8px", fontSize: 10, height: 26 }} onClick={handleSaveDetails} disabled={savingDetails}>
                     {savingDetails ? "..." : "SAVE"}
                   </button>
-                  <button type="button" className="btn-ghost" style={{ padding: "2px 8px", fontSize: 10, height: 26, border: "1px solid #333", color: "#aaa" }} onClick={() => { setIsEditingDetails(false); setTempName(p.name); setTempPrice(p.price); setTempType(p.type || "FAN VERSION"); }}>
+                  <button type="button" className="btn-ghost" style={{ padding: "2px 8px", fontSize: 10, height: 26, border: "1px solid #333", color: "#aaa" }} onClick={() => { setIsEditingDetails(false); setTempName(p.name); setTempPrice(p.price); setTempType(p.type || "FAN VERSION"); setTempTeamId(p.team_id || ""); }}>
                     CANCEL
                   </button>
                 </div>
