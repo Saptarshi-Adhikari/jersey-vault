@@ -34,6 +34,7 @@ const ACCENT_MAP = {
   "tottenham": "#132257",
   "ac-milan": "#fb090b",
   "inter-milan": "#0068a8",
+  "inter-miami": "#f7b5cd",
   "juventus": "#e0e0e0",
   "psg": "#004170",
   "bayern-munich": "#dc052d",

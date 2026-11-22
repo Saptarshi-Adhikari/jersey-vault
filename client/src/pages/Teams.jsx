@@ -9,6 +9,7 @@ import heroBg from "../assets/hero-bg.jpeg";
 import BrandLogo from "../components/BrandLogo";
 import laliga26Video from "../assets/Laliga26.mp4.mp4";
 import initialTeams from "../data/teams.json";
+import { resolveImageUrl } from "../utils/imageHelpers";
 
 const FLAME_ID = "jv-flame-teams";
 
@@ -204,6 +205,7 @@ export default function Teams() {
     const q = searchQuery.toLowerCase().trim();
     if (!q) return matchesSport;
     const matchesSearch = nameLower.includes(q) ||
+      (t.name === "INTER MIAMI" && (q === "miami" || q === "inter miami" || q.includes("miami") || q === "messi")) ||
       (t.name === "ROYAL CHALLENGERS BANGALORE" && (q === "rcb" || q.includes("rcb"))) ||
       (t.name === "CHENNAI SUPER KINGS" && (q === "csk" || q.includes("csk"))) ||
       (t.name === "INDIAN CRICKET TEAM" && (q === "bcci" || q === "india" || q.includes("bcci"))) ||
@@ -949,13 +951,15 @@ export default function Teams() {
                     <div className="t-team-logo-bg">
                       {team.logo_url ? (
                         <img
-                          src={team.logo_url}
+                          src={resolveImageUrl(team.logo_url)}
                           alt={team.name}
                           className="t-team-logo"
+                          referrerPolicy="no-referrer"
                           onError={(e) => {
                             const retry = Number(e.currentTarget.dataset.retry || 0);
-                            if (team.logo_url?.includes('teams/')) {
-                              const rawFn = team.logo_url.split('teams/')[1].split('?')[0];
+                            const finalUrl = resolveImageUrl(team.logo_url);
+                            if (finalUrl?.includes('teams/')) {
+                              const rawFn = finalUrl.split('teams/')[1].split('?')[0];
                               const base = rawFn.substring(0, rawFn.lastIndexOf('.')) || rawFn;
                               if (retry === 0) {
                                 e.currentTarget.dataset.retry = '1';

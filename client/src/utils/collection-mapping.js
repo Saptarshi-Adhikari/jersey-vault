@@ -19,6 +19,9 @@ export const COLLECTION_MAPPING = {
   "inter-milan": { type: "team", matchName: "INTER MILAN", title: "Inter Milan Kits & Jerseys", h1: "INTER MILAN JERSEYS", desc: "Shop premium Inter Milan home, away, and third kits." },
   "juventus": { type: "team", matchName: "JUVENTUS", title: "Juventus Kits & Jerseys", h1: "JUVENTUS JERSEYS", desc: "Shop premium Juventus home, away, and third kits." },
 
+  // CLUBS - MLS
+  "inter-miami": { type: "team", matchName: "INTER MIAMI", title: "Inter Miami Kits & Jerseys", h1: "INTER MIAMI CF JERSEYS", desc: "Shop official Inter Miami CF home, away, and third kits featuring Lionel Messi." },
+
   // CLUBS - BUNDESLIGA & LIGUE 1
   "bayern-munich": { type: "team", matchName: "BAYERN MUNICH", title: "Bayern Munich Kits & Jerseys", h1: "BAYERN MUNICH JERSEYS", desc: "Shop premium Bayern Munich home, away, and third kits." },
   "psg": { type: "team", matchName: "PSG", title: "PSG Kits & Jerseys", h1: "PSG JERSEYS", desc: "Shop premium Paris Saint-Germain home, away, and third kits." },
